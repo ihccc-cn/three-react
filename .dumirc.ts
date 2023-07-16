@@ -2,9 +2,14 @@ import { defineConfig } from 'dumi';
 
 export default defineConfig({
   themeConfig: {
-    name: 'three-react',
-    title: 'three-react',
+    name: 'Three-React',
+    title: 'Three-React',
     // logo: '',
   },
-  styles: ['section.dumi-default-header-left { width: 300px; }'],
+  styles: [
+    '#root .dumi-default-hero { margin: 64px auto; height: auto; padding: 0; }',
+    'section.dumi-default-header-left { width: 240px; }',
+    '.dumi-default-navbar-collapse-btn { display: none; }',
+    '.dumi-default-navbar-dropdown { width: 8em }',
+  ],
 });

@@ -1,5 +1,5 @@
 import React, { type FC } from "react";
-import ThreeViewer from "./components/ThreeViewer";
+import ThreeViewer from "@/components/ThreeViewer";
 import demo from "./examples/start/demo";
 
 const App: FC<{}> = () => (
