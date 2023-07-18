@@ -4,7 +4,7 @@ export default defineConfig({
   themeConfig: {
     name: 'Three-React',
     title: 'Three-React',
-    // logo: '',
+    logo: '/logo.png',
   },
   styles: [
     '#root .dumi-default-hero { margin: 64px auto; height: auto; padding: 0; }',

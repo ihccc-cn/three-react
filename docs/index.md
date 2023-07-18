@@ -1,10 +1,10 @@
 ---
 title: 学习 Threejs
 hero:
-  title: Threejs
-  description: 学习 Threejs
+  title: Three
+  description: 学习 Threejs 🧊 
   actions:
-    - text: 快速上手
+    - text: 指南
       link: /guide
 ---
 

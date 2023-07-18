@@ -1,5 +1,5 @@
 ---
-title: 基础
+title: 2D 基础图形
 order: 1
 
 nav:
@@ -30,4 +30,6 @@ demo:
 <code src="./graphics/square/index.tsx" compact="true">方形</code>
 <code src="./graphics/circle/index.tsx" compact="true">圆形和多边形</code>
 <code src="./graphics/ring/index.tsx" compact="true">环形</code>
+<code src="./graphics/ellipse/index.tsx" compact="true">椭圆</code>
+
 <code src="./graphics/shape/index.tsx" compact="true">任意形状</code>

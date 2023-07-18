@@ -7,4 +7,6 @@ nav:
   order: 0
 ---
 
-This is a guide example.
+目前此项目只是作为展示和查看 `Threejs` 渲染的示例，用于学习和参考。
+
+不积跬步，无以至千里；不积小流，无以成江海。
