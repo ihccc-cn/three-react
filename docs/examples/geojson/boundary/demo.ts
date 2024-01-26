@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import geoJsonData from './geo.json';
 
 const defaultConfig = {
   width: 960,
-  height: 300,
+  height: 600,
   backgroundColor: 0x393939,
   alpha: 0.0,
 };
@@ -25,24 +26,30 @@ function demo(opts?: object) {
   camera.lookAt(new THREE.Vector3(0, 0, 0));
   scene.add(camera);
 
-  // 线段
-  const points: THREE.Vector3[] = [];
-  points.push(new THREE.Vector3(0, 0, 1));
-  points.push(new THREE.Vector3(0, 1, 1));
-  points.push(new THREE.Vector3(1, 1, 1));
-  points.push(new THREE.Vector3(1, 0, 1));
-  points.push(new THREE.Vector3(1, 0, 0));
-  points.push(new THREE.Vector3(0, 0, 0));
-  points.push(new THREE.Vector3(0, 1, 0));
-  points.push(new THREE.Vector3(1, 1, 0));
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+  // 创建一个新的顶点数组
+  const points: THREE.Vector3[] = [];
+  // 遍历每个多边形
+  for (let i = 0; i < geoJsonData.features.length; i++) {
+    const feature = geoJsonData.features[i];
+    console.log(feature);
+
+    const coordinates = feature.geometry.coordinates;
+
+    for (let j = 0; j < coordinates.length; j++) {
+      const coord = coordinates[j] as any;
+      points.push(new THREE.Vector3(coord[0], coord[1], 0)); // 假设所有点都在z=0的平面上
+    }
+  }
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
   const line = new THREE.Line(geometry, material);
+
+  // 添加到场景中
   scene.add(line);
 
+  // animation
   renderer.setAnimationLoop(function animation(time) {
-    line.rotation.x = time / 2000;
-    line.rotation.y = time / 2000;
     renderer.render(scene, camera);
   });
 
