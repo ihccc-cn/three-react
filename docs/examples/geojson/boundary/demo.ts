@@ -37,8 +37,9 @@ function demo(opts?: object) {
 
     const coordinates = feature.geometry.coordinates;
 
-    for (let j = 0; j < coordinates.length; j++) {
-      const coord = coordinates[j] as any;
+    for (let j = 0; j < coordinates[0].length; j++) {
+      const coord = coordinates[0][j] as any;
+
       points.push(new THREE.Vector3(coord[0], coord[1], 0)); // 假设所有点都在z=0的平面上
     }
   }
