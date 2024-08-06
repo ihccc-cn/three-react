@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-// @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import initThree from '../../../utils/initThree';
 
@@ -9,9 +8,9 @@ function demo(opts?: object) {
   const loader = new GLTFLoader();
   loader.load(
     '/model/gltf/building_A.gltf',
-    function (gltf: GLTFLoader) {
+    function (gltf: any) {
       const model = gltf.scene;
-      model.position.set(-1.2, -0.75, 0);
+      model.position.set(-1.2, -1, 0);
       scene.add(model);
     },
     undefined,
@@ -21,9 +20,9 @@ function demo(opts?: object) {
   );
   loader.load(
     '/model/gltf/building_B.gltf',
-    function (gltf: GLTFLoader) {
+    function (gltf: any) {
       const model = gltf.scene;
-      model.position.set(1.2, -0.75, 0);
+      model.position.set(1.2, -1, 0);
       scene.add(model);
     },
     undefined,

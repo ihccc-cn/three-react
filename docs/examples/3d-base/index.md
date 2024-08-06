@@ -5,8 +5,8 @@ order: 2
 nav:
   title: 示例
   order: 1
-  second: 示例
-
+  second: 3D 基础物体
+  
 group: 简单上手
 
 demo:

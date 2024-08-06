@@ -5,7 +5,7 @@ order: 0
 nav:
   title: 示例
   order: 1
-  second: 示例
+  second: Start
 
 group: 简单上手
 ---

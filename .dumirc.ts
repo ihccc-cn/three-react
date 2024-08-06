@@ -12,4 +12,5 @@ export default defineConfig({
     '.dumi-default-navbar-collapse-btn { display: none; }',
     '.dumi-default-navbar-dropdown { width: 8em }',
   ],
+  mako: {},
 });

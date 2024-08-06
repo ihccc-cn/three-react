@@ -5,7 +5,7 @@ order: 1
 nav:
   title: 示例
   order: 1
-  second: 示例
+  second: 2D 基础图形
 
 group: 简单上手
 

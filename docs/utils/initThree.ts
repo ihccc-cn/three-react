@@ -1,6 +1,15 @@
 import * as THREE from 'three';
-// @ts-ignore
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+type TConfig = {
+  width: number;
+  height: number;
+  backgroundColor: number | string;
+  alpha: number;
+  antialias: boolean;
+  controls: Record<string, any>;
+  ambientLight: Record<string, any>;
+};
 
 const defaultConfig = {
   width: 960,
@@ -30,6 +39,11 @@ const defaultConfig = {
 };
 
 function initThree(opts?: object) {
+  const envOption: TConfig = {
+    ...defaultConfig,
+    ...opts,
+  };
+
   const {
     width,
     height,
@@ -38,10 +52,7 @@ function initThree(opts?: object) {
     antialias,
     controls: controlOpts,
     ambientLight: ambientLightOpts,
-  } = {
-    ...defaultConfig,
-    ...opts,
-  };
+  } = envOption;
 
   const renderer = new THREE.WebGLRenderer({ antialias });
   renderer.setSize(width, height);
@@ -65,10 +76,11 @@ function initThree(opts?: object) {
     scene.add(ambientLight);
   }
 
-  let controls: OrbitControls = null;
+  let controls: null | OrbitControls = null;
   if (!!controlOpts) {
     controls = new OrbitControls(camera, renderer.domElement);
     for (const key in controlOpts) {
+      // @ts-ignore
       controls[key] = controlOpts[key];
     }
   }
@@ -83,6 +95,7 @@ function initThree(opts?: object) {
   }
 
   return {
+    envOption,
     renderer,
     scene,
     camera,

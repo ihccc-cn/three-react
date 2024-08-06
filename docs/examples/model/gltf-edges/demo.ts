@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-// @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import initThree from '../../../utils/initThree';
 
@@ -9,7 +8,7 @@ function demo(opts?: object) {
   const loader = new GLTFLoader();
   loader.load(
     '/model/gltf/building_C.gltf',
-    function (gltf: GLTFLoader) {
+    function (gltf: any) {
       const model = gltf.scene;
 
       const geometry = model.children[0].geometry;
@@ -26,10 +25,10 @@ function demo(opts?: object) {
       // 创建线条
       const line = new THREE.Line(edges, lineMaterial);
 
-      line.position.y = -0.75;
+      line.position.y = -1;
       scene.add(line);
 
-      // model.position.y = -0.75;
+      // model.position.y = -1;
       // scene.add(model);
     },
     undefined,
