@@ -1,6 +1,6 @@
-import React, { type FC } from "react";
-import ThreeViewer from "@/components/ThreeViewer";
-import demo from "./demo";
+import React, { type FC } from 'react';
+import ThreeViewer from '@/docs/components/ThreeViewer';
+import demo from './demo';
 
 const App: FC<{}> = () => <ThreeViewer render={demo} />;
 

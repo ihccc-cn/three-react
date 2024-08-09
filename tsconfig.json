@@ -3,11 +3,12 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "lib": ["ES2015", "DOM"],
     "jsx": "react",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
-      "@@/*": [".dumi/tmp/*" ],
-      "@/*": ["./docs/*", "*"]
+      "@@/*": [".dumi/tmp/*"],
+      "@/*": ["./*"]
     }
   },
   "include": [".dumirc.ts", "./"]
