@@ -1,17 +1,23 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import initThree from '../../../utils/initThree';
+import CreateThree from '../../../utils/create-three';
 
 function demo(opts?: object) {
-  const { renderer, scene, start } = initThree(opts);
+  const engine = CreateThree.init({ ...opts });
+
+  engine.addPerspectiveCamera();
+  engine.addAmbientLight({ intensity: 1 });
+  engine.addControls();
+  engine.camera?.position.set(0, 0, 8);
 
   const loader = new GLTFLoader();
+
   loader.load(
     '/model/gltf/building_A.gltf',
     function (gltf: any) {
       const model = gltf.scene;
       model.position.set(-1.2, -1, 0);
-      scene.add(model);
+      engine.scene.add(model);
     },
     undefined,
     function (error) {
@@ -23,7 +29,7 @@ function demo(opts?: object) {
     function (gltf: any) {
       const model = gltf.scene;
       model.position.set(1.2, -1, 0);
-      scene.add(model);
+      engine.scene.add(model);
     },
     undefined,
     function (error) {
@@ -31,9 +37,9 @@ function demo(opts?: object) {
     },
   );
 
-  start();
+  engine.start();
 
-  return renderer;
+  return engine;
 }
 
 export default demo;

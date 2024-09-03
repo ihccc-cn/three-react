@@ -4,8 +4,8 @@ import Stats from 'stats.js/src/Stats';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 type TLight = {
-  color: THREE.ColorRepresentation;
-  intensity: number;
+  color?: THREE.ColorRepresentation;
+  intensity?: number;
 };
 
 type TConfig = {
@@ -67,8 +67,6 @@ class CreateThree {
       this.stats = new Stats();
       this.stats.showPanel(stats); // 0: fps, 1: ms, 2: mb, 3+: custom
     }
-
-    console.log(this);
   }
 
   /** 创建 Three 环境 */
@@ -99,7 +97,7 @@ class CreateThree {
   /** 添加透视相机 */
   addPerspectiveCamera() {
     const { width, height } = this.option;
-    this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 600);
+    this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100000);
     this.camera.position.set(40, 40, 40);
     this.scene.add(this.camera);
   }
