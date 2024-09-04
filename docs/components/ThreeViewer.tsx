@@ -44,9 +44,11 @@ const Loading: FC<{ title: string; progress: number }> = ({
   return (
     <div className="loading">
       <span>{title}</span>
-      <div className="process">
-        <div className="process-bar" style={{ width: `${progress}%` }}></div>
-      </div>
+      {progress >= 0 && (
+        <div className="process">
+          <div className="process-bar" style={{ width: `${progress}%` }}></div>
+        </div>
+      )}
     </div>
   );
 };

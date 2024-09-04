@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { decimal } from '@ihccc/utils';
 import CreateThree from '../../../utils/create-three';
 import loadGltfs, { TResult } from '../../../utils/load-gltfs';
 
-const assetPath = '/model/gltf/{name}.gltf';
+const assetPath =
+  '/model/KayKit_City_Builder_Bits_1.0_FREE/Assets/gltf/{name}.gltf';
 const modelAssets = [
   'base', // 0
   'bench', // 1
@@ -49,8 +49,8 @@ const modelAssets = [
   'watertower', // 40
 ];
 
-const item_size = 2;
-const layer_space = 0.12;
+const ITEM_SIZE = 2;
+const LAYER_SPACE = 0.12;
 
 const W = 270; // 西
 const N = 180; // 北
@@ -58,12 +58,12 @@ const E = 90; // 东
 // const S = 0; // 南
 
 const layer_ground = [
-  [14 + N, 12 + E, 31, 4 + W, 8 + N, 6 + N, 4 + N, 6 + N],
+  [29 + N, 12 + E, 29, 31 + E, 31 + E, 33 + E, 31 + E, 31 + E],
   [10, 16, 32, 18, 4, 12, 8, 14],
   [31 + E, 32 + E, 30, 32 + E, 31 + E, 31 + E, 31 + E, 31 + E],
   [12 + N, 0, 32, 10 + N, 14 + N, 18 + N, 10 + N, 16 + N],
-  [28 + W, 16 + E, 31, 6 + W, 0, 0, 10, 12],
-  [33, 31 + E, 33 + N, 10, 18, 29, 31 + E, 32 + E],
+  [0, 16 + E, 31, 6 + W, 0, 0, 10, 0],
+  [33 + W, 31 + E, 33 + N, 10, 18, 29, 31 + E, 31 + E],
   [31, 4 + W, 29 + E, 31 + E, 32 + E, 33 + N, 12 + N, 16 + N],
   [31, 12 + W, 6 + N, 16 + N, 10 + N, 31, 0, 18],
 ];
@@ -80,9 +80,9 @@ const layer_building = [
 ];
 
 const layer_car_1 = [
-  [-1, -1, 21, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, 22 + E, -1, -1, -1, -1, 21 + E, -1],
+  [-1, -1, 21, -1, -1, -1, -1, -1],
+  [-1, 22 + E, -1, 23 + E, -1, 24 + E, 21 + E, -1],
   [-1, -1, 24, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, 22 + E, -1, -1],
   [-1, -1, 25, -1, -1, -1, 23 + E, -1],
@@ -91,12 +91,12 @@ const layer_car_1 = [
 ];
 
 const layer_car_2 = [
-  [-1, -1, 24 + N, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, 23 + W, -1, -1, -1, 25 + W, -1, -1],
+  [-1, -1, -1, -1, -1, -1, -1, -1],
+  [-1, 23 + W, -1, -1, 21 + W, 25 + W, -1, 24 + W],
   [-1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, 21 + N, -1, -1, -1, -1, -1],
-  [24 + N, -1, -1, -1, -1, -1, -1, -1],
+  [24 + W, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, 22 + W, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, 21 + N, -1, -1],
 ];
@@ -112,7 +112,8 @@ function demo(opts: object, setViewInfo: Function) {
     engine.camera.fov = 50;
     engine.camera.near = 1;
     engine.camera.far = 5000;
-    engine.camera.position.set(18, 10, 30);
+    engine.camera.position.set(-0.036, 0.623, 11.987);
+    engine.controls?.target.set(0.64, 0.692, 11.049);
   }
 
   const loader = new GLTFLoader();
@@ -125,9 +126,9 @@ function demo(opts: object, setViewInfo: Function) {
   //     const row = Math.floor(i / cols);
   //     const col = i % cols;
   //     model.position.set(
-  //       col * item_size,
+  //       col * ITEM_SIZE,
   //       0,
-  //       row * item_size - (rows + 1) * item_size,
+  //       row * ITEM_SIZE - (rows + 1) * ITEM_SIZE,
   //     );
   //     engine.scene.add(model);
   //   });
@@ -140,20 +141,24 @@ function demo(opts: object, setViewInfo: Function) {
     layerIndex: number = 0,
     handle?: Function,
   ) => {
-    for (let x = 0; x < layer.length; x++) {
-      for (let y = 0; y < layer[x].length; y++) {
-        const id = layer[y][x];
-        if (id < 0) continue;
-        const name = assets[id % 90];
-        const model = models[name].clone();
-        model.position.set(
-          x * item_size,
-          layerIndex * layer_space,
-          y * item_size,
-        );
-        if (id >= 90) model.rotateY((Math.floor(id / 90) * Math.PI) / 2);
-        handle?.(id, model);
-        engine.scene.add(model);
+    for (let ox = -1; ox <= 1; ox++) {
+      for (let oy = -1; oy <= 1; oy++) {
+        for (let x = 0; x < layer.length; x++) {
+          for (let y = 0; y < layer[x].length; y++) {
+            const id = layer[y][x];
+            if (id < 0) continue;
+            const name = assets[id % 90];
+            const model = models[name].clone();
+            model.position.set(
+              x * ITEM_SIZE + ox * ITEM_SIZE * 8,
+              layerIndex * LAYER_SPACE,
+              y * ITEM_SIZE + oy * ITEM_SIZE * 8,
+            );
+            if (id >= 90) model.rotateY((Math.floor(id / 90) * Math.PI) / 2);
+            handle?.(id, model);
+            engine.scene.add(model);
+          }
+        }
       }
     }
   };
@@ -199,11 +204,7 @@ function demo(opts: object, setViewInfo: Function) {
     );
   };
 
-  const onProgress = (name: string, event: ProgressEvent) => {
-    const progress = decimal(
-      (event.loaded / (event.total || event.loaded)) * 100,
-      1,
-    );
+  const onProgress = (name: string, progress: number) => {
     setViewInfo({ type: 'loading', title: `正在加载模型 - ${name}`, progress });
   };
 

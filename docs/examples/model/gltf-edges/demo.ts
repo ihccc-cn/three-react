@@ -7,7 +7,7 @@ function demo(opts?: object) {
 
   const loader = new GLTFLoader();
   loader.load(
-    '/model/gltf/building_C.gltf',
+    '/model/KayKit_City_Builder_Bits_1.0_FREE/Assets/gltf/building_C.gltf',
     function (gltf: any) {
       const model = gltf.scene;
 
@@ -30,10 +30,6 @@ function demo(opts?: object) {
 
       // model.position.y = -1;
       // scene.add(model);
-    },
-    undefined,
-    function (error) {
-      console.error(error);
     },
   );
 

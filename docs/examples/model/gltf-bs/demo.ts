@@ -1,10 +1,10 @@
 // import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { decimal } from '@ihccc/utils';
 import CreateThree from '../../../utils/create-three';
 import loadGltfs, { TResult } from '../../../utils/load-gltfs';
 
-const assetPath = '/model/gltf/{name}.gltf';
+const assetPath =
+  '/model/KayKit_City_Builder_Bits_1.0_FREE/Assets/gltf/{name}.gltf';
 const modelAssets = [
   'base', // 0
   'bench', // 1
@@ -49,7 +49,7 @@ const modelAssets = [
   'watertower', // 40
 ];
 const col = 200;
-const item_size = 2;
+const ITEM_SIZE = 2;
 
 function demo(opts: object, setViewInfo: Function) {
   const engine = CreateThree.init({ ...opts });
@@ -61,11 +61,7 @@ function demo(opts: object, setViewInfo: Function) {
 
   const loader = new GLTFLoader();
 
-  const onProgress = (name: string, event: ProgressEvent) => {
-    const progress = decimal(
-      (event.loaded / (event.total || event.loaded)) * 100,
-      1,
-    );
+  const onProgress = (name: string, progress: number) => {
     setViewInfo({ type: 'loading', title: `正在加载模型 - ${name}`, progress });
   };
 
@@ -77,7 +73,7 @@ function demo(opts: object, setViewInfo: Function) {
     modelAssets.forEach((name, z) => {
       for (let x = -col / 2; x < col / 2; x++) {
         const model = models[name].clone();
-        model.position.set(x * item_size, 0, z * item_size);
+        model.position.set(x * ITEM_SIZE, 0, z * ITEM_SIZE);
         engine.scene.add(model);
       }
     });

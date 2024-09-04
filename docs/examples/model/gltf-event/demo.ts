@@ -46,16 +46,12 @@ function demo(opts?: object) {
 
   const loader = new GLTFLoader();
   loader.load(
-    '/model/gltf/building_D.gltf',
+    '/model/KayKit_City_Builder_Bits_1.0_FREE/Assets/gltf/building_D.gltf',
     function (gltf: any) {
       model = gltf.scene;
       if (!model) return;
       model.position.y = -1;
       scene.add(model);
-    },
-    undefined,
-    function (error) {
-      console.error(error);
     },
   );
 
