@@ -1,7 +1,12 @@
 import * as THREE from 'three';
 // @ts-ignore
 import Stats from 'stats.js/src/Stats';
+import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GUI, Controller } from 'three/examples/jsm/libs/lil-gui.module.min';
+import { decimal } from '@ihccc/utils';
+
+export type TGLTFResult = Record<string, GLTF>;
 
 type TLight = {
   color?: THREE.ColorRepresentation;
@@ -26,6 +31,26 @@ type TOption = {
   antialias: boolean;
 };
 
+type TGuiOptions = {
+  options: Record<string, any[]>;
+  ui: {
+    name: string;
+    label?: string;
+    folder?: string;
+    options?: string;
+    min?: number;
+    max?: number;
+  }[];
+};
+
+type TLoadGltfs = {
+  path?: string;
+  onLoaded?: Function;
+  onProgress?: Function;
+  onError?: Function;
+  onLoadInfo?: Function;
+};
+
 const defaultConfig = {
   stats: 0,
   width: 960,
@@ -39,6 +64,8 @@ class CreateThree {
   option: TOption;
 
   stats?: Stats;
+
+  gui?: Record<string, any>;
 
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
@@ -77,6 +104,7 @@ class CreateThree {
   /** 挂载 dom 节点 */
   mount(container: HTMLDivElement) {
     if (!!this.stats) container.appendChild(this.stats.dom);
+    if (!!this.gui) container.appendChild(this.gui.dom);
     container.appendChild(this.renderer.domElement);
   }
 
@@ -206,6 +234,119 @@ class CreateThree {
         this.controls[key] = options[key];
       }
     }
+  }
+
+  /**
+   * 添加参数控制器
+   * @param values 控制值
+   * @param guiOptions ui 配置
+   * @param guiConfig 容器配置
+   *
+   * @example
+   * const values: {
+   *   speed: 0.5, // 滑动条
+   *   input: 'name', // 输入框
+   *   enabled: false, // 复选框
+   *   mode: 'auto', // 下拉框
+   *   button: () => {}, // 操作按钮
+   * };
+   *
+   * const GUI_OPTIONS = {
+   *   options: { modes: ['auto', 'manual'] },
+   *   ui: [
+   *    { folder: 'folder 1', label: 'Speed', name: 'speed', min: 0.0, max: 10.0 },
+   *    { folder: 'folder 1', label: 'Input', name: 'input' },
+   *    { folder: 'folder 2', label: 'Enabled', name: 'enabled' },
+   *    { folder: 'folder 2', label: 'Mode', name: 'mode', options: 'modes' },
+   *    { label: 'Button', name: 'button' },
+   *   ]
+   * };
+   *
+   * engine.addGui(values, GUI_OPTIONS);
+   */
+  addGui(
+    values: Record<string, any>,
+    guiOptions: TGuiOptions,
+    guiConfig?: {
+      autoPlace?: boolean;
+      container?: HTMLElement;
+      width?: number;
+      title?: string;
+      injectStyles?: boolean;
+      touchStyles?: number;
+      parent?: GUI;
+    },
+  ) {
+    const dom = document.createElement('div');
+    dom.style.setProperty('position', 'fixed');
+    dom.style.setProperty('right', '0px');
+    const panel = new GUI({ width: 240, container: dom, ...guiConfig });
+    // 分组列表
+    const folder: Record<string, GUI> = {};
+    const controller: Record<string, Controller> = {};
+    // 创建分组
+    guiOptions.ui.forEach((item) => {
+      if (item.folder && !folder[item.folder]) {
+        folder[item.folder] = panel.addFolder(item.folder);
+      }
+    });
+    // 创建控制组件
+    guiOptions.ui.forEach((item) => {
+      const group = !item.folder ? panel : folder[item.folder];
+      const uiArgs = !item.options
+        ? [item.min, item.max]
+        : [guiOptions.options[item.options]];
+      controller[item.name] = group.add(values, item.name, ...uiArgs);
+      if (item.label) controller[item.name].name(item.label);
+    });
+
+    this.gui = {
+      dom,
+      panel,
+      folder,
+      controller,
+    };
+  }
+
+  /**
+   * 批量加载 GLTF 模型
+   * @param assets gltf 文件路径列表
+   * @param config.path 统一路径，eg: `/path/gltf/{name}.gltf`
+   * @param config.onLoaded 所有模型文件加载完成回调
+   * @param config.onLoadInfo 模型加载信息回调
+   */
+  loadGltfs(assets: any, config: TLoadGltfs) {
+    const { path, onLoaded, onProgress, onError, onLoadInfo } = config;
+
+    const models: TGLTFResult = {};
+    const loader = new GLTFLoader();
+
+    assets.forEach((name: string) => {
+      const url = !path ? name : path.replace('{name}', name);
+      loader.load(
+        url,
+        (gltf: GLTF) => {
+          models[name] = gltf;
+          if (Object.keys(models).length === assets.length) onLoaded?.(models);
+        },
+        (event: ProgressEvent<EventTarget>) => {
+          let progress = -1;
+          if (event.total > 0) {
+            progress = decimal((event.loaded / event.total) * 100, 1);
+          }
+          onProgress?.(name, progress);
+          onLoadInfo?.({
+            type: 'loading',
+            title: `正在加载模型 - ${name}`,
+            progress,
+          });
+        },
+        (event: ErrorEvent) => {
+          onError?.(event);
+          onLoadInfo?.({ type: 'error', title: `加载模型出错 - ${name}` });
+        },
+      );
+    });
   }
 }
 

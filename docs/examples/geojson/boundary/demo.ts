@@ -21,7 +21,6 @@ function demo(opts?: object) {
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-  camera.position.z = 1;
   camera.position.set(0, 0, 5);
   camera.lookAt(new THREE.Vector3(0, 0, 0));
   scene.add(camera);

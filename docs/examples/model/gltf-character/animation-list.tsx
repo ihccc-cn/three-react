@@ -2,29 +2,28 @@ import React from 'react';
 import ThreeViewer from '@/docs/components/ThreeViewer';
 
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import CreateThree from '../../../utils/create-three';
-import loadGltfs, { TFullResult } from '../../../utils/load-gltfs';
+import CreateThree, { TGLTFResult } from '../../../utils/create-three';
 
-const assetPath = '/model/KayKit_Skeletons_1.0_FREE/characters/gltf/{name}.glb';
-const modelAssets = [
-  'Skeleton_Minion', // 1
-];
+import {
+  ASSET_PATH,
+  ASSETS,
+  ITEM_SIZE,
+  ACTION_NAME,
+  GUI_VALUES,
+  GUI_OPTIONS,
+} from './config';
 
-const ITEM_SIZE = 2;
-const SKELETON_VISIBLE = false;
-const ACTION_NAME = 'Running_A';
-
-export function demo(opts: object, setViewInfo: Function) {
+export function demo(opts: object, onLoadInfo: Function) {
   const engine = CreateThree.init({ ...opts });
 
   engine.addPerspectiveCamera();
   engine.addAmbientLight({ intensity: 1 });
   engine.addControls();
+  engine.addGui(GUI_VALUES, GUI_OPTIONS, { title: '渲染参数' });
   engine.camera?.position.set(0, 0, 4);
 
-  const onLoaded = (models: TFullResult) => {
-    setViewInfo({});
+  const onLoaded = (models: TGLTFResult) => {
+    onLoadInfo({});
 
     const gltf = models.Skeleton_Minion;
     const model = gltf.scene;
@@ -32,15 +31,10 @@ export function demo(opts: object, setViewInfo: Function) {
     engine.scene.add(model);
 
     const skeleton = new THREE.SkeletonHelper(model);
-    skeleton.visible = SKELETON_VISIBLE;
+    skeleton.visible = true;
     engine.scene.add(skeleton);
 
     const mixer = new THREE.AnimationMixer(model);
-
-    console.log(
-      'Gltf Animation Names::',
-      gltf.animations.map((c) => c.name),
-    );
 
     const animation = gltf.animations.find((clip) => clip.name === ACTION_NAME);
 
@@ -60,16 +54,7 @@ export function demo(opts: object, setViewInfo: Function) {
     });
   };
 
-  const onProgress = (name: string, progress: number) => {
-    setViewInfo({ type: 'loading', title: `正在加载模型 - ${name}`, progress });
-  };
-
-  loadGltfs(new GLTFLoader(), modelAssets, {
-    assetPath,
-    fullModel: true,
-    onLoaded,
-    onProgress,
-  });
+  engine.loadGltfs(ASSETS, { path: ASSET_PATH, onLoadInfo, onLoaded });
 
   return engine;
 }

@@ -13,4 +13,5 @@ export default defineConfig({
     '.dumi-default-navbar-dropdown { width: 8em }',
   ],
   mako: {},
+  html2sketch: false,
 });
