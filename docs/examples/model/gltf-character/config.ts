@@ -7,14 +7,18 @@ export const ASSETS = [
 
 export const ITEM_SIZE = 2;
 
-export const ACTION_NAME = 'Running_A';
+export const DEFAULT_ACTION_NAME = 'Running_A';
 
 export const GUI_VALUES = {
-  action: 'Running_A',
+  actionName: 'Running_A',
+  skeletonHelper: false,
 };
 
 export const GUI_OPTIONS = {
-  ui: [{ label: '动画名称', name: 'action', options: 'actions' }],
+  ui: [
+    { label: '动画名称', name: 'actionName', options: 'actions' },
+    { label: '显示骨骼', name: 'skeletonHelper' },
+  ],
   options: {
     actions: [
       '1H_Melee_Attack_Chop',

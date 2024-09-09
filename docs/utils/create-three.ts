@@ -101,12 +101,25 @@ class CreateThree {
     return new CreateThree(option);
   }
 
-  /** 挂载 dom 节点 */
+  _resize() {
+    if (this.camera) {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+    }
+    this.renderer?.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  /** 挂载回调，添加 dom 节点等 */
   mount(container: HTMLDivElement) {
     if (!!this.stats) container.appendChild(this.stats.dom);
     if (!!this.gui) container.appendChild(this.gui.dom);
     container.appendChild(this.renderer.domElement);
+
+    window.addEventListener('resize', this._resize);
   }
+
+  /** 卸载回调 */
+  unmount() {}
 
   /** 开始运行 */
   start(callback?: Function) {
