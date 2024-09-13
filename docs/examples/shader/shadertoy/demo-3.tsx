@@ -141,7 +141,6 @@ function demo(opts?: Record<string, any>) {
     uniforms,
     vertexShader,
     fragmentShader,
-    side: THREE.DoubleSide,
     transparent: true,
   });
 

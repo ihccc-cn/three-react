@@ -8,6 +8,7 @@ function demo(opts?: Record<string, any>) {
 
   engine.addPerspectiveCamera();
   engine.addAmbientLight();
+  engine.addControls();
 
   const { width, height } = engine.renderer.getDrawingBufferSize(
     new THREE.Vector2(),
@@ -136,8 +137,8 @@ function demo(opts?: Record<string, any>) {
 
     // Helper function that generates camera ray based on UV and mouse
     vec3 getRay() {
-      vec2 uv = ((gl_FragCoord.xy / iResolution.xy) * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-      // vec2 uv = vUv;
+      // vec2 uv = ((gl_FragCoord.xy / iResolution.xy) * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+      vec2 uv = vUv;
       // for fisheye, uncomment following line and comment the next one
       //vec3 proj = normalize(vec3(uv.x, uv.y, 1.0) + vec3(uv.x, uv.y, -1.0) * pow(length(uv), 2.0) * 0.05);
       vec3 proj = normalize(vec3(uv.x, uv.y, 1.5));
@@ -259,10 +260,11 @@ function demo(opts?: Record<string, any>) {
     vertexShader,
     fragmentShader,
     side: THREE.DoubleSide,
-    transparent: true,
+    // transparent: true,
   });
 
-  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), shader);
+  const geometry = new THREE.PlaneGeometry(1, 1);
+  const plane = new THREE.Mesh(geometry, shader);
   plane.rotateX(Math.PI / -2);
   engine.scene.add(plane);
 
