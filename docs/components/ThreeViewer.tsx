@@ -1,6 +1,8 @@
 import React, { type FC } from 'react';
 import './index.less';
 
+const inDemoPage = () => window.location.pathname.indexOf('~demos') > 0;
+
 const useMountThreeRef = (render: Function, opts?: Record<string, any>) => {
   const containerRef = React.useRef<HTMLDivElement | null>(null);
   const [info, setInfo] = React.useState<Record<string, any>>({});
@@ -15,9 +17,7 @@ const useMountThreeRef = (render: Function, opts?: Record<string, any>) => {
       const renderer = render(
         {
           ...opts,
-          ...(window.location.pathname.indexOf('~demos') > 0
-            ? { height: window.innerHeight }
-            : {}),
+          ...(inDemoPage() ? { height: window.innerHeight } : {}),
           width: container.offsetWidth,
           container,
         },

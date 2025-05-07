@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import EventEmitter from 'eventemitter3';
 // @ts-ignore
 import Stats from 'stats.js/src/Stats';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -17,6 +18,7 @@ type TConfig = {
   stats?: number;
   width?: number;
   height?: number;
+  aspect?: number;
   backgroundColor?: number | string;
   alpha?: number;
   antialias?: boolean;
@@ -26,6 +28,7 @@ type TOption = {
   stats?: number;
   width: number;
   height: number;
+  aspect?: number;
   backgroundColor: number | string;
   alpha: number;
   antialias: boolean;
@@ -60,7 +63,14 @@ const defaultConfig = {
   antialias: true,
 };
 
-class CreateThree {
+const Event = {
+  /** 画布尺寸发生变化 */
+  RESIZE: 'resize',
+};
+
+class CreateThree extends EventEmitter {
+  static Event = Event;
+
   option: TOption;
 
   stats?: Stats;
@@ -76,7 +86,12 @@ class CreateThree {
   grid: null | THREE.GridHelper = null;
   controls: null | OrbitControls = null;
 
+  container: null | HTMLDivElement = null;
+
+  _resize: any;
+
   constructor(option?: TConfig) {
+    super();
     this.option = Object.assign({}, defaultConfig, option);
     const { stats, width, height, backgroundColor, alpha, antialias } =
       this.option;
@@ -94,6 +109,8 @@ class CreateThree {
       this.stats = new Stats();
       this.stats.showPanel(stats); // 0: fps, 1: ms, 2: mb, 3+: custom
     }
+
+    this._resize = this.onResize.bind(this);
   }
 
   /** 创建 Three 环境 */
@@ -101,12 +118,17 @@ class CreateThree {
     return new CreateThree(option);
   }
 
-  _resize() {
+  onResize() {
+    if (!this.container) return;
+    this.option.width = this.container.offsetWidth;
+    this.option.height = this.container.offsetHeight;
+    this.option.aspect = this.option.width / this.option.height;
     if (this.camera) {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.aspect = this.option.aspect;
       this.camera.updateProjectionMatrix();
     }
-    this.renderer?.setSize(window.innerWidth, window.innerHeight);
+    this.renderer?.setSize(this.option.width, this.option.height);
+    this.emit(Event.RESIZE, this.option);
   }
 
   /** 挂载回调，添加 dom 节点等 */
@@ -114,12 +136,15 @@ class CreateThree {
     if (!!this.stats) container.appendChild(this.stats.dom);
     if (!!this.gui) container.appendChild(this.gui.dom);
     container.appendChild(this.renderer.domElement);
+    this.container = container;
 
     window.addEventListener('resize', this._resize);
   }
 
   /** 卸载回调 */
-  unmount() {}
+  unmount() {
+    window.removeEventListener('resize', this._resize);
+  }
 
   /** 开始运行 */
   start(callback?: Function) {
