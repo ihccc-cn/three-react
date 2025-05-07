@@ -15,9 +15,13 @@ demo:
 
 ## Shadertoy 示例
 
+<a href="https://www.shadertoy.com/view/4ljGD1" target="_blank">Shadertoy 地址</a>
+
+<code src="./demo-0.tsx" compact="true"></code>
+
 <a href="https://www.shadertoy.com/view/stf3zs" target="_blank">Shadertoy 地址</a>
 
-<code src="./demo-1.tsx" compact="true"></code>
+<!-- <code src="./demo-1.tsx" compact="true"></code> -->
 
 <a href="https://www.shadertoy.com/view/MdXyzX" target="_blank">Shadertoy 地址</a>
 
