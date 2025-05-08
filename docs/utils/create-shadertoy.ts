@@ -14,6 +14,7 @@ type TUniforms = {
   iChannel1?: { value: THREE.DataTexture };
   iChannel2?: { value: THREE.DataTexture };
   iChannel3?: { value: THREE.DataTexture };
+  iChannelTime?: { value: number[] };
 };
 
 type TChannelAudio = {
@@ -30,8 +31,10 @@ function createChannelAudioTexture(channel: TChannelAudio): any {
   const audio = new THREE.Audio(listener);
 
   const audioPlayer = new Audio(channel.audioSrc);
-  audioPlayer.loop = !!channel.loop;
-  if (!!channel.audioSrc) audioPlayer.play();
+  if (!!channel.audioSrc) {
+    audioPlayer.loop = !!channel.loop;
+    audioPlayer.play();
+  }
 
   audio.setMediaElementSource(audioPlayer);
   const analyser = new THREE.AudioAnalyser(audio, channel.fftSize);
@@ -51,12 +54,14 @@ function createChannelAudioTexture(channel: TChannelAudio): any {
 function createChannels(uniforms: TUniforms, channels?: TChannels): any[] {
   if (!channels || channels.length === 0) return [];
   return channels.reduce((list, channel, i) => {
+    if (!uniforms.iChannelTime) uniforms.iChannelTime = { value: [] };
     if (channel.type === 'audio') {
       const handler = createChannelAudioTexture(channel);
       // 创建频率数据容器
       uniforms[('iChannel' + i) as 'iChannel0'] = {
         value: handler.audioTexture,
       };
+      uniforms.iChannelTime.value[i] = 0;
       return list.concat(handler);
     }
     return list;
@@ -95,7 +100,7 @@ function createShadertoyShader(
     uniform float     iTimeDelta;            // render time (in seconds)
     // uniform float     iFrameRate;            // shader frame rate
     uniform int       iFrame;                // shader playback frame
-    // uniform float     iChannelTime[4];       // channel playback time (in seconds)
+    uniform float     iChannelTime[4];       // channel playback time (in seconds)
     // uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)
     uniform vec4      iMouse;                // mouse pixel coords. xy: current (if MLB down), zw: click
     // uniform samplerXX iChannel0..3;          // input channel. XX = 2D/Cube
@@ -171,13 +176,17 @@ function createShadertoy(
       const material = shadertoyShader.material;
       const channelhandlers = shadertoyShader.channelhandlers;
       // material.uniforms.iTime.value += 0.01;
-      material.uniforms.iTime.value = clock.getElapsedTime();
+      const elapsedTime = clock.getElapsedTime();
+      material.uniforms.iTime.value = elapsedTime;
       material.uniforms.iTimeDelta.value = clock.getDelta();
       // material.uniforms.iFrameRate.value =
       material.uniforms.iFrame.value += 1;
       material.uniforms.iDate.value = Date.now();
 
-      channelhandlers.forEach((channel) => {
+      channelhandlers.forEach((channel, i) => {
+        if (!!material.uniforms.iChannelTime) {
+          material.uniforms.iChannelTime.value[i] += elapsedTime;
+        }
         if (channel.type === 'audio') {
           channel.analyser.getFrequencyData();
           material.uniforms.iChannel0.value.needsUpdate = true;

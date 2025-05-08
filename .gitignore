@@ -1,7 +1,8 @@
 node_modules
 /dist
 /public/three-demo
-/public/model/KayKit_*_FREE
+/public/audio
+/public/model
 .dumi/tmp
 .dumi/tmp-production
 .DS_Store

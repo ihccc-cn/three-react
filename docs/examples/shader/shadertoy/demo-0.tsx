@@ -5,8 +5,16 @@ import createShadertoy from '../../../utils/create-shadertoy';
 import shadertoy from './shader-0-01.ts';
 import shadertoy2 from './shader-0-02.ts';
 import shadertoy3 from './shader-0-03.ts';
+import shadertoy4 from './shader-0-04.ts';
+// import shadertoy5 from './shader-0-05.ts';
+import shadertoy6 from './shader-0-06.ts';
+// import shadertoy7 from './shader-0-07.ts';
+import shadertoy8 from './shader-0-08.ts';
+import shadertoy9 from './shader-0-09.ts';
+import shadertoy10 from './shader-0-10.ts';
+import shadertoy11 from './shader-0-11.ts';
 
-const audios = [
+const audios: string[] = [
   'Battle Ready',
   'Black Knight',
   'Dawn of the Apocalypse',
@@ -16,16 +24,29 @@ const audios = [
   'The Enemy',
 ];
 
-const shadertoyStyle: Record<'曲线' | '色块' | '曲线2', string> = {
-  曲线: shadertoy,
-  色块: shadertoy2,
-  曲线2: shadertoy3,
+const shadertoyStyle: Record<string, string> = {
+  频闪曲线: shadertoy,
+  跳跃色块: shadertoy2,
+  炫彩曲线: shadertoy3,
+  灵动曲线: shadertoy4,
+  // shadertoy5: shadertoy5,
+  对称频谱: shadertoy6,
+  // shadertoy7: shadertoy7,
+  动感音阶: shadertoy8,
+  迷幻空间: shadertoy9,
+  舞动剧场: shadertoy10,
+  寰宇边界: shadertoy11,
 };
 
-const GUI_VALUES = {
+const GUI_VALUES: {
+  audioSrc: string;
+  loop: boolean;
+  styleKey: keyof typeof shadertoyStyle;
+  togglePlay: () => void;
+} = {
   audioSrc: audios[0],
   loop: true,
-  styleKey: '曲线',
+  styleKey: '频闪曲线',
   togglePlay: () => {},
 };
 
@@ -52,10 +73,11 @@ function demo(opts: Record<string, any>, setViewInfo: Function) {
   const gui = engine.gui.controller;
 
   const run = () => {
-    const stage = createShadertoy(engine, shadertoy, [
+    const stage = createShadertoy(engine, shadertoyStyle[GUI_VALUES.styleKey], [
       {
         type: 'audio',
         audioSrc: getAudioSrc(GUI_VALUES.audioSrc),
+        loop: GUI_VALUES.loop,
         fftSize: 512,
       },
     ]);
