@@ -3,6 +3,8 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "lib": ["ES2015", "DOM"],
     "jsx": "react",
     "baseUrl": ".",

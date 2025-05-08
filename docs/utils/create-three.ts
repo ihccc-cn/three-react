@@ -66,6 +66,8 @@ const defaultConfig = {
 const Event = {
   /** 画布尺寸发生变化 */
   RESIZE: 'resize',
+  MOUNT: 'mount',
+  UNMOUNT: 'unmount',
 };
 
 class CreateThree extends EventEmitter {
@@ -75,7 +77,7 @@ class CreateThree extends EventEmitter {
 
   stats?: Stats;
 
-  gui?: Record<string, any>;
+  gui!: Record<string, any>;
 
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
@@ -139,11 +141,13 @@ class CreateThree extends EventEmitter {
     this.container = container;
 
     window.addEventListener('resize', this._resize);
+    this.emit(Event.MOUNT);
   }
 
   /** 卸载回调 */
   unmount() {
     window.removeEventListener('resize', this._resize);
+    this.emit(Event.UNMOUNT);
   }
 
   /** 开始运行 */

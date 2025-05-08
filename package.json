@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/react": "~18.2.15",
     "@types/three": "~0.154.0",
-    "dumi": "2.4.13",
+    "dumi": "2.4.20",
     "lint-staged": "~13.0.3",
     "prettier": "~2.7.1"
   },
