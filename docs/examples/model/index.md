@@ -1,14 +1,15 @@
 ---
-title: 模型加载
-order: 2
-
 nav:
   title: 示例
   order: 1
-  second: Model 模型加载
-
-group: 简单上手
-
+  second:
+    title: Model 模型加载
+    order: 3
+group:
+  title: 简单上手
+  order: 0
+title: 模型加载
+order: 1
 demo:
   cols: 2
 ---

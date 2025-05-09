@@ -1,0 +1,38 @@
+/* 调整主页样式 */
+#root .dumi-default-hero {
+  margin: 64px auto;
+  height: auto;
+  padding: 0;
+}
+/* 调整主页样式 */
+
+/* 调整主标题样式 */
+section.dumi-default-header-left {
+  width: 240px;
+}
+/* 调整主标题样式 */
+
+/* 调整菜单按钮样式 */
+.dumi-default-navbar-collapse-btn {
+  display: none;
+}
+/* 调整菜单按钮样式 */
+
+/* 调整二级菜单样式 */
+#root .dumi-default-navbar > li > .dumi-default-navbar-dropdown {
+  margin: 28px 0 0;
+}
+
+#root .dumi-default-navbar > li > .dumi-default-navbar-dropdown > li {
+  line-height: 32px;
+}
+
+#root .dumi-default-navbar > li > .dumi-default-navbar-dropdown > li > a {
+  padding: 4px 16px;
+  border-top: 1px solid rgba(220, 220, 220, 0.15);
+}
+
+#root .dumi-default-navbar > li > .dumi-default-navbar-dropdown > li > a:hover {
+  background: rgba(200, 220, 220, 0.2);
+}
+/* 调整二级菜单样式 */

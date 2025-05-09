@@ -1,14 +1,15 @@
 ---
-title: GeoJson
-order: 2
-
 nav:
   title: 示例
   order: 1
-  second: GeoJson
-
-group: 简单上手
-
+  second:
+    title: GeoJson
+    order: 3
+group:
+  title: 简单上手
+  order: 0
+title: GeoJson
+order: 1
 demo:
   cols: 2
 ---

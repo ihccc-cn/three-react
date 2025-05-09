@@ -1,14 +1,13 @@
 ---
-title: Shadertoy 着色器
-order: 2
-
 nav:
   title: 示例
   order: 1
   second: Shader 着色器
-
-group: 简单上手
-
+group:
+  title: 简单上手
+  order: 1
+title: Shadertoy 着色器
+order: 2
 demo:
   cols: 2
 ---

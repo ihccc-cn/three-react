@@ -1,14 +1,15 @@
 ---
-title: 2D 基础图形
-order: 1
-
 nav:
   title: 示例
   order: 1
-  second: 2D 基础图形
-
-group: 简单上手
-
+  second:
+    title: 2D 基础图形
+    order: 1
+group:
+  title: 简单上手
+  order: 0
+title: 2D 基础图形
+order: 1
 demo:
   cols: 2
 ---

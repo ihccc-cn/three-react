@@ -1,10 +1,8 @@
 ---
-title: 指南
-order: 1
-
 nav:
   title: 指南
   order: 0
+title: 指南
 ---
 
 目前此项目只是作为展示和查看 `Threejs` 渲染的示例，用于学习和参考。

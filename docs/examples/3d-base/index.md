@@ -1,14 +1,15 @@
 ---
-title: 3D 基础物体
-order: 2
-
 nav:
   title: 示例
   order: 1
-  second: 3D 基础物体
-  
-group: 简单上手
-
+  second:
+    title: 3D 基础物体
+    order: 2
+group:
+  title: 简单上手
+  order: 0
+title: 3D 基础物体
+order: 1
 demo:
   cols: 2
 ---

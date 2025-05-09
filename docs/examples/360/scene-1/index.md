@@ -1,13 +1,17 @@
 ---
-title: 单场景
-order: 2
-
 nav:
   title: 示例
   order: 1
-  second: 360看图
-
-group: 简单上手
+  second:
+    title: 场景案例
+    order: 99
+group:
+  title: 简单上手
+  order: 0
+title: 360 看图
+order: 1
+demo:
+  cols: 2
 ---
 
 ## 360看图
