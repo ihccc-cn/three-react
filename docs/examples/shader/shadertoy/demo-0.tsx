@@ -69,10 +69,10 @@ const getAudioSrc = (name: string): string =>
 function demo(opts: Record<string, any>, setViewInfo: Function) {
   const engine = CreateThree.init({ ...opts });
 
-  engine.addGui(GUI_VALUES, GUI_OPTIONS, { title: '播放参数' });
-  const gui = engine.gui.controller;
-
   const run = () => {
+    engine.addGui(GUI_VALUES, GUI_OPTIONS, { title: '播放参数' });
+    const gui = engine.gui.controller;
+
     const stage = createShadertoy(engine, shadertoyStyle[GUI_VALUES.styleKey], [
       {
         type: 'audio',

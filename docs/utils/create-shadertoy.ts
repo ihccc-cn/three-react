@@ -71,7 +71,12 @@ function createChannels(uniforms: TUniforms, channels?: TChannels): any[] {
 /** 创建 uniforms */
 function createUniforms(width: number, height: number): TUniforms {
   return {
-    iResolution: { value: new THREE.Vector2(width, height) },
+    iResolution: {
+      value: new THREE.Vector2(
+        Math.floor(width * window.devicePixelRatio),
+        Math.floor(height * window.devicePixelRatio),
+      ),
+    },
     iTime: { value: 0.0 },
     iTimeDelta: { value: 0.0 },
     iFrame: { value: 1 },
@@ -129,8 +134,8 @@ function createShadertoyShader(
 /** 创建渲染面板 */
 export function createShadertoyPlane(
   material: THREE.ShaderMaterial,
+  aspect: number,
 ): THREE.Mesh {
-  const aspect = window.innerWidth / window.innerHeight;
   const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(aspect * 2, 2),
     material,
@@ -161,7 +166,7 @@ function createShadertoy(
 
   const shadertoyShader = { uniforms, material, channelhandlers };
 
-  const plane = createShadertoyPlane(shadertoyShader.material);
+  const plane = createShadertoyPlane(shadertoyShader.material, width / height);
 
   engine.scene.add(plane);
 
@@ -170,15 +175,13 @@ function createShadertoy(
   engine.camera?.lookAt(plane.position);
 
   const start = () => {
-    const clock = new THREE.Clock();
-
     engine.start(() => {
       const material = shadertoyShader.material;
       const channelhandlers = shadertoyShader.channelhandlers;
       // material.uniforms.iTime.value += 0.01;
-      const elapsedTime = clock.getElapsedTime();
+      const elapsedTime = engine.clock.getElapsedTime();
       material.uniforms.iTime.value = elapsedTime;
-      material.uniforms.iTimeDelta.value = clock.getDelta();
+      material.uniforms.iTimeDelta.value = engine.clock.getDelta();
       // material.uniforms.iFrameRate.value =
       material.uniforms.iFrame.value += 1;
       material.uniforms.iDate.value = Date.now();
@@ -215,20 +218,20 @@ function createShadertoy(
 
   engine.on(CreateThree.Event.RESIZE, (option: any) => {
     shadertoyShader.material.uniforms.iResolution.value.set(
-      option.width,
-      option.height,
+      Math.floor(option.width * window.devicePixelRatio),
+      Math.floor(option.height * window.devicePixelRatio),
     );
   });
 
   engine.on(CreateThree.Event.UNMOUNT, stop);
 
-  engine.renderer.domElement.addEventListener('mousemove', (e) => {
+  engine.on(CreateThree.Event.MOUSEMOVE, (e: MouseEvent) => {
     const material = shadertoyShader.material;
     material.uniforms.iMouse.value.x = e.clientX;
     material.uniforms.iMouse.value.y = window.innerHeight - e.clientY;
   });
 
-  engine.renderer.domElement.addEventListener('mousedown', (e) => {
+  engine.on(CreateThree.Event.MOUSEDOWN, (e: MouseEvent) => {
     const material = shadertoyShader.material;
     material.uniforms.iMouse.value.z = e.clientX;
     material.uniforms.iMouse.value.w = window.innerHeight - e.clientY;

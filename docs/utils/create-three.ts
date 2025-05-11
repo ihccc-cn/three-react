@@ -66,31 +66,48 @@ const defaultConfig = {
 const Event = {
   /** 画布尺寸发生变化 */
   RESIZE: 'resize',
+  /** 挂载 */
   MOUNT: 'mount',
+  /** 卸载 */
   UNMOUNT: 'unmount',
+  /** 鼠标在画布上移动 */
+  MOUSEMOVE: 'mousemove',
+  /** 鼠标在画布上按下 */
+  MOUSEDOWN: 'mousedown',
 };
 
 class CreateThree extends EventEmitter {
+  /** 引擎事件 */
   static Event = Event;
-
+  /** 引擎配置 */
   option: TOption;
-
+  /** 渲染器 stats */
   stats?: Stats;
-
+  /** 渲染参数控制器 */
   gui!: Record<string, any>;
-
+  /** 默认渲染器对象 */
   renderer: THREE.WebGLRenderer;
-  scene: THREE.Scene;
+  /** 默认场景对象 */
+  scene: THREE.Scene = new THREE.Scene();
+  /** 默认时钟对象 */
+  clock: THREE.Clock = new THREE.Clock();
+  /** 默认摄像机对象，需要调用相关方法添加 */
   camera: null | THREE.PerspectiveCamera = null;
+  /** 默认环境光源对象，需要调用相关方法添加 */
   mainLight: null | THREE.AmbientLight | THREE.DirectionalLight | THREE.Light =
     null;
+  /** 默认地面对象，需要调用相关方法添加 */
   ground: null | THREE.Mesh = null;
+  /** 默认地面网格对象，需要调用相关方法添加 */
   grid: null | THREE.GridHelper = null;
+  /** 默认鼠标控制器对象，需要调用相关方法添加 */
   controls: null | OrbitControls = null;
-
+  /** 挂载画布的容器节点 */
   container: null | HTMLDivElement = null;
 
   _resize: any;
+  _mousemove: any;
+  _mousedown: any;
 
   constructor(option?: TConfig) {
     super();
@@ -105,48 +122,69 @@ class CreateThree extends EventEmitter {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    this.scene = new THREE.Scene();
-
     if (typeof stats === 'number' && stats > -1) {
       this.stats = new Stats();
       this.stats.showPanel(stats); // 0: fps, 1: ms, 2: mb, 3+: custom
     }
 
     this._resize = this.onResize.bind(this);
+    this._mousemove = this.onMousemove.bind(this);
+    this._mousedown = this.onMousedown.bind(this);
   }
 
-  /** 创建 Three 环境 */
+  /** 初始化 Three 引擎 */
   static init(option?: TConfig) {
     return new CreateThree(option);
   }
 
+  /** 画面尺寸变化回调 */
   onResize() {
     if (!this.container) return;
-    this.option.width = this.container.offsetWidth;
-    this.option.height = this.container.offsetHeight;
+    this.option.width = Math.floor(this.container.offsetWidth);
+    this.option.height = Math.floor(this.container.offsetHeight);
     this.option.aspect = this.option.width / this.option.height;
     if (this.camera) {
       this.camera.aspect = this.option.aspect;
       this.camera.updateProjectionMatrix();
     }
-    this.renderer?.setSize(this.option.width, this.option.height);
+    this.renderer.setSize(this.option.width, this.option.height);
+    this.renderer.domElement.width = this.option.width;
+    this.renderer.domElement.height = this.option.height;
     this.emit(Event.RESIZE, this.option);
   }
 
-  /** 挂载回调，添加 dom 节点等 */
+  /** 鼠标在画布上移动的回调 */
+  onMousemove(event: MouseEvent) {
+    this.emit(Event.MOUSEMOVE, event);
+  }
+
+  /** 鼠标在画布上点击的回调 */
+  onMousedown(event: MouseEvent) {
+    this.emit(Event.MOUSEDOWN, event);
+  }
+
+  /** 挂载回调，添加 dom 节点，监听事件等 */
   mount(container: HTMLDivElement) {
     if (!!this.stats) container.appendChild(this.stats.dom);
-    if (!!this.gui) container.appendChild(this.gui.dom);
+    if (!!this.gui && !this.gui.mounted) {
+      container.appendChild(this.gui.dom);
+      this.gui.mounted = true;
+    }
     container.appendChild(this.renderer.domElement);
     this.container = container;
 
     window.addEventListener('resize', this._resize);
+    this.renderer.domElement.addEventListener('mousemove', this._mousemove);
+    this.renderer.domElement.addEventListener('mousedown', this._mousedown);
+
     this.emit(Event.MOUNT);
   }
 
   /** 卸载回调 */
   unmount() {
     window.removeEventListener('resize', this._resize);
+    this.renderer.domElement.removeEventListener('mousemove', this._mousemove);
+    this.renderer.domElement.removeEventListener('mousedown', this._mousedown);
     this.emit(Event.UNMOUNT);
   }
 
@@ -164,7 +202,7 @@ class CreateThree extends EventEmitter {
     });
   }
 
-  /** 添加透视相机 */
+  /** 在场景中添加透视相机 */
   addPerspectiveCamera() {
     const { width, height } = this.option;
     this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100000);
@@ -172,7 +210,7 @@ class CreateThree extends EventEmitter {
     this.scene.add(this.camera);
   }
 
-  /** 添加地面 */
+  /** 在场景中添加地面 */
   addGround() {
     this.ground = new THREE.Mesh(
       new THREE.PlaneGeometry(600, 600),
@@ -184,7 +222,7 @@ class CreateThree extends EventEmitter {
     this.scene.add(this.ground);
   }
 
-  /** 添加地面网格 */
+  /** 在场景中添加地面网格 */
   addGroundGrid() {
     this.grid = new THREE.GridHelper(600, 20, 0x000000, 0x000000);
     this.grid.position.y = 0.1;
@@ -193,45 +231,41 @@ class CreateThree extends EventEmitter {
     this.scene.add(this.grid);
   }
 
-  /** 添加雾效 */
+  /** 在场景中添加雾效 */
   addFog() {
     this.scene.background = new THREE.Color(0xd9d9d9);
     this.scene.fog = new THREE.Fog(0xd9d9d9, 160, 600);
   }
 
-  /** 添加环境光 */
+  /** 在场景中添加环境光 */
   addAmbientLight(options?: TLight) {
     options = Object.assign({ color: 0xffffff, intensity: 2 }, options);
-    if (!!options) {
-      this.mainLight = new THREE.AmbientLight(options.color, options.intensity); // 浅灰色，强度为2
-      this.scene.add(this.mainLight);
-    }
+    this.mainLight = new THREE.AmbientLight(options.color, options.intensity); // 浅灰色，强度为2
+    this.scene.add(this.mainLight);
   }
 
-  /** 添加方向光 */
+  /** 在场景中添加方向光 */
   addDirectionalLight(options?: TLight) {
     options = Object.assign({ color: 0xffffff, intensity: 2 }, options);
-    if (!!options) {
-      this.mainLight = new THREE.DirectionalLight(
-        options.color,
-        options.intensity,
-      );
-      this.mainLight.position.set(120, 80, 120);
-      this.mainLight.castShadow = true;
+    this.mainLight = new THREE.DirectionalLight(
+      options.color,
+      options.intensity,
+    );
+    this.mainLight.position.set(120, 80, 120);
+    this.mainLight.castShadow = true;
 
-      if (this.mainLight instanceof THREE.DirectionalLight) {
-        const size = 200;
-        this.mainLight.shadow.camera.top = size;
-        this.mainLight.shadow.camera.bottom = -size;
-        this.mainLight.shadow.camera.left = -size;
-        this.mainLight.shadow.camera.right = size;
-      }
-
-      this.scene.add(this.mainLight);
+    if (this.mainLight instanceof THREE.DirectionalLight) {
+      const size = 200;
+      this.mainLight.shadow.camera.top = size;
+      this.mainLight.shadow.camera.bottom = -size;
+      this.mainLight.shadow.camera.left = -size;
+      this.mainLight.shadow.camera.right = size;
     }
+
+    this.scene.add(this.mainLight);
   }
 
-  /** 添加方向光辅助线 */
+  /** 在场景中添加方向光辅助线 */
   addMainLightHelper() {
     if (this.mainLight instanceof THREE.DirectionalLight) {
       const dirLightHelper = new THREE.DirectionalLightHelper(
@@ -242,15 +276,15 @@ class CreateThree extends EventEmitter {
     }
   }
 
-  /** 添加半球光 */
+  /** 在场景中添加半球光 */
   addHemisphereLight() {
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
     hemiLight.position.set(0, 120, 0);
     this.scene.add(hemiLight);
   }
 
-  /** 添加控制器 */
-  addControls(options?: Record<keyof OrbitControls, any>) {
+  /** 添加摄像机鼠标控制器 */
+  addControls(options?: Partial<OrbitControls>) {
     options = Object.assign(
       {
         enableDamping: true, // 启用阻尼效果
@@ -279,7 +313,7 @@ class CreateThree extends EventEmitter {
   }
 
   /**
-   * 添加参数控制器
+   * 添加渲染参数控制器
    * @param values 控制值
    * @param guiOptions ui 配置
    * @param guiConfig 容器配置
@@ -319,6 +353,7 @@ class CreateThree extends EventEmitter {
       parent?: GUI;
     },
   ) {
+    if (!!this.gui) return;
     const dom = document.createElement('div');
     dom.style.setProperty('position', 'fixed');
     dom.style.setProperty('right', '0px');
@@ -342,11 +377,18 @@ class CreateThree extends EventEmitter {
       if (item.label) controller[item.name].name(item.label);
     });
 
+    let mounted = false;
+    if (!!this.container) {
+      this.container.appendChild(dom);
+      mounted = true;
+    }
+
     this.gui = {
       dom,
       panel,
       folder,
       controller,
+      mounted,
     };
   }
 

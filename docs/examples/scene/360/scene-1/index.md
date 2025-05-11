@@ -16,4 +16,4 @@ demo:
 
 ## 360看图
  
-<code src="./index.tsx" compact="true"></code>
+<code src="./demo.tsx" compact="true"></code>

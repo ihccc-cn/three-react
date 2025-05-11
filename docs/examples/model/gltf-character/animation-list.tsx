@@ -54,12 +54,9 @@ export function demo(opts: object, onLoadInfo: Function) {
 
     skeletonAnimation.createByGltf(gltf);
 
-    // 创建时钟对象
-    const clock = new THREE.Clock();
-
     engine.start(() => {
       // 计算时间差
-      const deltaTime = clock.getDelta();
+      const deltaTime = engine.clock.getDelta();
       // 更新动画混合器
       skeletonAnimation.update(deltaTime);
     });
