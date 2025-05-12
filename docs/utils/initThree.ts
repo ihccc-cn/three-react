@@ -33,8 +33,8 @@ const defaultConfig = {
     autoRotateSpeed: 1.0, // 设置自动旋转的速度
   },
   ambientLight: {
-    color: 0xb9b9b9,
-    intensity: 2,
+    color: 0xffffff,
+    intensity: 4,
   },
 };
 

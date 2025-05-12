@@ -10,7 +10,7 @@ function demo(opts: object) {
   const engine = CreateThree.init({ ...opts });
 
   engine.addPerspectiveCamera();
-  engine.addAmbientLight({ intensity: 1.2 });
+  engine.addAmbientLight({ intensity: 4 });
   engine.addControls({
     autoRotate: true,
     autoRotateSpeed: 0.4,

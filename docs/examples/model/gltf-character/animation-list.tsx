@@ -18,7 +18,7 @@ export function demo(opts: object, onLoadInfo: Function) {
   const engine = CreateThree.init({ ...opts });
 
   engine.addPerspectiveCamera();
-  engine.addAmbientLight({ intensity: 1 });
+  engine.addAmbientLight();
   engine.addControls();
   engine.addGui(GUI_VALUES, GUI_OPTIONS, { title: '渲染参数' });
   engine.camera?.position.set(0, 0, 4);

@@ -6,7 +6,7 @@ function demo(opts?: object) {
   const engine = CreateThree.init({ ...opts });
 
   engine.addPerspectiveCamera();
-  engine.addAmbientLight({ intensity: 1 });
+  engine.addAmbientLight();
   engine.addControls();
   engine.camera?.position.set(0, 0, 8);
 

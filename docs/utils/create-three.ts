@@ -35,7 +35,7 @@ type TOption = {
 };
 
 type TGuiOptions = {
-  options: Record<string, any[]>;
+  options?: Record<string, any[]>;
   ui: {
     name: string;
     label?: string;
@@ -239,7 +239,7 @@ class CreateThree extends EventEmitter {
 
   /** 在场景中添加环境光 */
   addAmbientLight(options?: TLight) {
-    options = Object.assign({ color: 0xffffff, intensity: 2 }, options);
+    options = Object.assign({ color: 0xffffff, intensity: 4 }, options);
     this.mainLight = new THREE.AmbientLight(options.color, options.intensity); // 浅灰色，强度为2
     this.scene.add(this.mainLight);
   }
@@ -372,8 +372,8 @@ class CreateThree extends EventEmitter {
       const group = !item.folder ? panel : folder[item.folder];
       const uiArgs = !item.options
         ? [item.min, item.max]
-        : [guiOptions.options[item.options]];
-      controller[item.name] = group.add(values, item.name, ...uiArgs);
+        : [(guiOptions.options || {})[item.options]];
+      controller[item.name] = group.add(values, item.name, ...(uiArgs as any));
       if (item.label) controller[item.name].name(item.label);
     });
 
@@ -403,7 +403,8 @@ class CreateThree extends EventEmitter {
     const { path, onLoaded, onProgress, onError, onLoadInfo } = config;
 
     const models: TGLTFResult = {};
-    const loader = new GLTFLoader();
+    const manager = new THREE.LoadingManager();
+    const loader = new GLTFLoader(manager);
 
     assets.forEach((name: string) => {
       const url = !path ? name : path.replace('{name}', name);
