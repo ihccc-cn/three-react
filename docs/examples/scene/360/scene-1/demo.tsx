@@ -16,7 +16,7 @@ function demo(opts: object) {
     autoRotateSpeed: 0.4,
     maxDistance: 15,
   });
-
+  engine.addAxesHelper();
   engine.camera?.position.set(0, 0, 0.1);
 
   // 加载单张全景图

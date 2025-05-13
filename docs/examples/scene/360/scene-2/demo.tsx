@@ -11,62 +11,52 @@ const sceneData: TSceneData = {
     {
       name: '1',
       texture: '/image/billiard_hall.webp',
-      place: 'Center',
-      index: 0,
     },
     {
       name: '2',
       texture: '/image/blocky_photo_studio.webp',
-      place: 'Left',
-      index: 0,
+      x: 1,
     },
     {
       name: '3',
       texture: '/image/brown_photostudio_02.webp',
-      place: 'Left',
-      index: 1,
+      x: 2,
     },
     {
       name: '4',
       texture: '/image/christmas_photo_studio_07.webp',
-      place: 'Right',
-      index: 0,
+      x: -1,
     },
     {
       name: '5',
       texture: '/image/mirrored_hall.webp',
-      place: 'Right',
-      index: 1,
+      x: -1,
+      z: -1,
     },
     {
       name: '6',
       texture: '/image/photo_studio_01.webp',
-      place: 'Front',
-      index: 0,
+      z: 1,
     },
     {
       name: '7',
       texture: '/image/rostock_laage_airport.webp',
-      place: 'Back',
-      index: 0,
+      z: -1,
     },
     {
       name: '8',
       texture: '/image/small_empty_room_1.webp',
-      place: 'Top',
-      index: 0,
+      y: 1,
     },
     {
       name: '9',
       texture: '/image/small_empty_room_3.webp',
-      place: 'Down',
-      index: 0,
+      y: -1,
     },
     {
       name: '10',
       texture: '/image/warm_restaurant_night.webp',
-      place: 'Down',
-      index: 1,
+      y: -2,
     },
   ],
 };
@@ -74,11 +64,11 @@ const sceneData: TSceneData = {
 const GUI_VALUES: {
   sceneIndex: number;
 } = {
-  sceneIndex: 0,
+  sceneIndex: 1,
 };
 
 const GUI_OPTIONS = {
-  ui: [{ label: '场景', name: 'sceneIndex' }],
+  ui: [{ label: '场景', name: 'sceneIndex', min: 1, max: 10, step: 1 }],
 };
 
 function demo(opts: object) {
@@ -86,21 +76,30 @@ function demo(opts: object) {
 
   engine.addPerspectiveCamera();
   engine.addAmbientLight({ intensity: 4 });
-  engine.addControls();
+  engine.addControls({ enablePan: false });
 
-  engine.camera?.position.set(0, 0, 0.1);
+  engine.camera!.position.set(0, 0, 0.1);
+
+  engine.addGui(GUI_VALUES, GUI_OPTIONS, { title: '播放参数' });
+  const gui = engine.gui.controller;
 
   const sceneTour = new CreateSceneTour(sceneData);
 
+  gui.sceneIndex.onChange((sceneIndex: number) => {
+    sceneTour.change(sceneIndex);
+  });
+
   sceneTour.on('load', (scene: any) => {
-    engine.addGui(GUI_VALUES, GUI_OPTIONS, { title: '播放参数' });
-    const gui = engine.gui.controller;
-
-    gui.sceneIndex.onChange((sceneIndex: number) => {
-      sceneTour.change(sceneIndex);
-    });
-
     engine.scene.add(scene);
+  });
+
+  sceneTour.on('change', (room: any) => {
+    const position = room.position;
+    engine.camera!.position.copy(position);
+    engine.camera!.position.z += 0.1;
+    engine.camera!.lookAt(position);
+    engine.controls!.target.copy(position);
+    engine.controls!.update();
   });
 
   engine.start();

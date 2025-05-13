@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@ihccc/utils": "0.0.1-alpha.3",
+    "@tweenjs/tween.js": "^25.0.0",
     "eventemitter3": "^5.0.1",
     "react": "~18.3.1",
     "stats.js": "~0.17.0",

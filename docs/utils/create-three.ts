@@ -43,6 +43,7 @@ type TGuiOptions = {
     options?: string;
     min?: number;
     max?: number;
+    step?: number;
   }[];
 };
 
@@ -283,6 +284,12 @@ class CreateThree extends EventEmitter {
     this.scene.add(hemiLight);
   }
 
+  /** 在场景中添加坐标轴辅助线：红（X轴）、绿（Y轴）、蓝（Z轴） */
+  addAxesHelper(size?: number) {
+    const axesHelper = new THREE.AxesHelper(size);
+    this.scene.add(axesHelper);
+  }
+
   /** 添加摄像机鼠标控制器 */
   addControls(options?: Partial<OrbitControls>) {
     options = Object.assign(
@@ -371,7 +378,7 @@ class CreateThree extends EventEmitter {
     guiOptions.ui.forEach((item) => {
       const group = !item.folder ? panel : folder[item.folder];
       const uiArgs = !item.options
-        ? [item.min, item.max]
+        ? [item.min, item.max, item.step]
         : [(guiOptions.options || {})[item.options]];
       controller[item.name] = group.add(values, item.name, ...(uiArgs as any));
       if (item.label) controller[item.name].name(item.label);
